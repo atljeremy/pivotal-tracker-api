@@ -6,6 +6,15 @@ A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracke 
 ### Basic Example
 
 ```ruby
+# Use your personal Pivotal token
+def set_token
+  # This will set the @token in the Client class. Class caching must be enabled for the token to persist.
+  # config.cache_classes = true
+  PivotalService.set_token(your_token_here)
+end
+```
+
+```ruby
 # Authenticate a user using email / pass
 def get_user_token
   email = params[:email]
