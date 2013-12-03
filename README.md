@@ -33,7 +33,7 @@ end
 
 ```ruby
 # Get a Projects Stories by a specific Label
-def get_iteration
+def stories_by_label
   project_label   = params[:project_label]
   @project_label  = CGI.escape(project_label) if project_label
   @stories = PivotalService.all_stories(@project_label, @project, Scorer::Story.fields) if @project_label
