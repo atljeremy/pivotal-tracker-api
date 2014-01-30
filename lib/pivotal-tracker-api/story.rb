@@ -39,7 +39,7 @@ module Scorer
         deadline: json_story[:deadline]
       })
 
-      parsed_story.comments = parse_notes(json_story[:comments], json_story)
+      parsed_story.comments = get_story_comments(project_id, parsed_story)
       parsed_story.tasks = parse_tasks(json_story[:tasks], json_story)
       parsed_story.attachments = []
       parsed_story
@@ -53,21 +53,8 @@ module Scorer
       stories
     end
 
-    def self.parse_notes(notes, story)
-      comments = Array.new
-      if notes
-        notes.each do |note|
-          comments << Scorer::Comment.new({
-            id: note[:id].to_i,
-            text: note[:text],
-            author: note[:person_id],
-            created_at: DateTime.parse(note[:created_at].to_s).to_s,
-            updated_at: DateTime.parse(note[:updated_at].to_s).to_s,
-            story: story
-          })
-        end
-      end
-      comments
+    def self.get_story_comments(project_id, story)
+      PivotalService.comments(project_id, story, Scorer::Comment.fields)
     end
 
     def self.parse_tasks(tasks, story)

@@ -100,6 +100,13 @@ class PivotalService
       Scorer::Client.put(api_url, updates)
     end
 
+    def comments(project_id, story, fields)
+      api_url = append_fields('/projects' + "/#{project_id}/stories/#{story.id}/comments", fields)
+      response = Scorer::Client.get_with_caching(api_url)
+      json_comments = JSON.parse(response, {:symbolize_names => true})
+      Scorer::Comment.parse_json_comments(json_comments, story)
+    end
+
     private
 
       def append_fields(api_url, fields)
