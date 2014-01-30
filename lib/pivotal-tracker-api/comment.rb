@@ -1,7 +1,7 @@
 module Scorer
   class Comment
 
-    attr_accessor :story, :project_id, :story_id, :id, :text, :author, :created_at
+    attr_accessor :story, :project_id, :story_id, :id, :text, :author, :created_at, :updated_at
 
     def initialize(attributes={})
       if attributes[:owner]
