@@ -33,7 +33,7 @@ class PivotalService
       Scorer::Activity.parse_json_activity(json_activity, project_id)
     end
 
-    def iterations(project_id, scope, fields=[], limit=1, offset=1)
+    def iterations(project_id, scope, get_comments, fields=[], limit=1, offset=1)
       return @iteration if !@iteration.nil? && @iteration.project_id == project_id
 
       api_url = "/projects/#{project_id}/iterations?"
@@ -46,7 +46,12 @@ class PivotalService
       api_url = append_fields(api_url, fields)
       response = Scorer::Client.get_with_caching(api_url)
       json_iterations = JSON.parse(response, {:symbolize_names => true})
-      @iteration = Scorer::Iteration.parse_json_iteration(json_iterations[0])
+      if get_comments
+        @iteration = Scorer::Iteration.parse_json_iteration_with_comments(json_iterations[0])
+      else
+        @iteration = Scorer::Iteration.parse_json_iteration(json_iterations[0])
+      end
+      @iteration
     end
 
     def all_stories(project_label, project, fields=[])
@@ -65,7 +70,7 @@ class PivotalService
       Scorer::Story.parse_json_story(json_story, project.id)
     end
 
-    def stories(project, should_cache, ids=[], fields=[])
+    def stories(project, should_cache, get_comments, ids=[], fields=[])
       @stories = Array.new
       api_url = append_fields('/projects' + "/#{project.id}/stories", fields)
       api_url = api_url.rindex('?fields=') ? "#{api_url}&filter=id%3A" : "#{api_url}?filter=id%3A"
@@ -77,7 +82,7 @@ class PivotalService
           response = Scorer::Client.get(api_url)
         end
         json_story = JSON.parse(response, {:symbolize_names => true})
-        @stories << Scorer::Story.parse_json_story(json_story[0], project.id)
+        @stories << Scorer::Story.parse_json_story(json_story[0], project.id, get_comments)
       else
         story_ids = ''
         ids.each do |id|
@@ -90,7 +95,7 @@ class PivotalService
           response = Scorer::Client.get(api_url)
         end
         json_stories = JSON.parse(response, {:symbolize_names => true})
-        @stories = Scorer::Story.parse_json_stories(json_stories, project.id)
+        @stories = Scorer::Story.parse_json_stories(json_stories, project.id, get_comments)
       end
     end
 

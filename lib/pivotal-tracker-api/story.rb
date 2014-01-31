@@ -17,7 +17,7 @@ module Scorer
        'deadline', 'comments', 'tasks']
     end
 
-    def self.parse_json_story(json_story, project_id)
+    def self.parse_json_story(json_story, project_id, get_comments)
       requested_by = json_story[:requested_by][:name] if !json_story[:requested_by].nil?
       story_id = json_story[:id].to_i
       estimate = json_story[:estimate] ? json_story[:estimate].to_i : -1
@@ -39,16 +39,20 @@ module Scorer
         deadline: json_story[:deadline]
       })
 
-      parsed_story.comments = get_story_comments(project_id, parsed_story)
+      if get_comments
+        parsed_story.comments = get_story_comments(project_id, parsed_story)
+      else
+        parsed_story.comments = Scorer::Comment.parse_json_comments(json_story[:comments], parsed_story)
+      end
       parsed_story.tasks = parse_tasks(json_story[:tasks], json_story)
       parsed_story.attachments = []
       parsed_story
     end
 
-    def self.parse_json_stories(json_stories, project_id)
+    def self.parse_json_stories(json_stories, project_id, get_comments)
       stories = Array.new
       json_stories.each do |story|
-        stories << parse_json_story(story, project_id)
+        stories << parse_json_story(story, project_id, get_comments)
       end
       stories
     end

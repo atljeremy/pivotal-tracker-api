@@ -10,10 +10,14 @@ module Scorer
     def self.parse_json_comments(json_comments, story)
       comments = Array.new
       json_comments.each do |comment|
+        person = Scorer::Person.parse_json_person({id: '0', name: 'Unkown', initials: 'Unkown', username: 'Unkown', email: 'Unkown'})
+        if comment[:person]
+          person = Scorer::Person.parse_json_person(comment[:person])
+        end
         comments << new({
           id: comment[:id].to_i,
           text: comment[:text],
-          author: Scorer::Person.parse_json_person(comment[:person]),
+          author: person,
           created_at: DateTime.parse(comment[:created_at].to_s).to_s,
           updated_at: DateTime.parse(comment[:updated_at].to_s).to_s,
           story: story
