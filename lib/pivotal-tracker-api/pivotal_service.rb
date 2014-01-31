@@ -54,12 +54,12 @@ class PivotalService
       @iteration
     end
 
-    def all_stories(project_label, project, fields=[])
+    def all_stories(project_label, project, get_comments, fields=[])
       api_url = append_fields('/projects' + "/#{project.id}/stories", fields)
       api_url = api_url + "&with_label=#{project_label}&with_state=unstarted&limit=100"
       response = Scorer::Client.get(api_url)
       json_stories = JSON.parse(response, {:symbolize_names => true})
-      Scorer::Story.parse_json_stories(json_stories, project.id)
+      Scorer::Story.parse_json_stories(json_stories, project.id, get_comments)
     end
 
     def one_story(project_label, project, fields=[])
