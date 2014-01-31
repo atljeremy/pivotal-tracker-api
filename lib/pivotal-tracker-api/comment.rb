@@ -1,10 +1,10 @@
 module Scorer
   class Comment
 
-    attr_accessor :story, :project_id, :story_id, :id, :text, :author, :created_at, :updated_at
+    attr_accessor :story, :project_id, :story_id, :id, :text, :author, :created_at, :updated_at, :file_attachments
 
     def self.fields
-      ['person', 'text', 'updated_at', 'id', 'created_at', 'story_id']
+      ['person', 'text', 'updated_at', 'id', 'created_at', 'story_id', 'file_attachments']
     end
 
     def self.parse_json_comments(json_comments, story)
@@ -14,12 +14,17 @@ module Scorer
         if comment[:person]
           person = Scorer::Person.parse_json_person(comment[:person])
         end
+        file_attachments = Array.new
+        if comment[:file_attachments]
+          file_attachments = Scorer::Attachment.parse_attachments(comment[:file_attachments])
+        end
         comments << new({
           id: comment[:id].to_i,
           text: comment[:text],
           author: person,
           created_at: DateTime.parse(comment[:created_at].to_s).to_s,
           updated_at: DateTime.parse(comment[:updated_at].to_s).to_s,
+          file_attachments: file_attachments,
           story: story
         })
       end
@@ -40,7 +45,7 @@ module Scorer
 
     def update_attributes(attrs)
       attrs.each do |key, value|
-        self.send("#{key}=", value.is_a?(Array) ? value.join(',') : value )
+        self.send("#{key}=", value)
       end
     end
 

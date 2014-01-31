@@ -4,7 +4,7 @@ module Scorer
     attr_accessor :project_id, :follower_ids, :updated_at, :current_state, :name, :comment_ids, :url, :story_type,
                   :label_ids, :description, :requested_by_id, :planned_iteration_number, :external_id, :deadline,
                   :owned_by_id, :owned_by, :created_at, :estimate, :kind, :id, :task_ids, :integration_id, :accepted_at,
-                  :comments, :tasks, :attachments, :requested_by, :labels, :notes, :started_at, :status
+                  :comments, :tasks, :has_attachments, :requested_by, :labels, :notes, :started_at, :status
 
     def initialize(attributes={})
       update_attributes(attributes)
@@ -44,8 +44,16 @@ module Scorer
       else
         parsed_story.comments = Scorer::Comment.parse_json_comments(json_story[:comments], parsed_story)
       end
+      parsed_story.has_attachments = false
+      if !parsed_story.comments.nil? && parsed_story.comments.count > 0
+        parsed_story.comments.each do |note|
+          if note.file_attachments.count > 0
+            parsed_story.has_attachments = true
+            break
+          end
+        end
+      end
       parsed_story.tasks = parse_tasks(json_story[:tasks], json_story)
-      parsed_story.attachments = []
       parsed_story
     end
 
@@ -75,24 +83,6 @@ module Scorer
         end
       end
       parsed_tasks
-    end
-
-    def self.parse_attachments(attachments)
-      parsed_attachments = Array.new
-      if attachments
-        attachments.each do |file|
-          attachment = Scorer::Attachment.new
-          attachment.id = file[:id].to_i
-          attachment.filename = file[:filename]
-          attachment.description = file[:description]
-          attachment.uploaded_by = file[:uploaded_by]
-          attachment.uploaded_at = file[:uploaded_at]
-          attachment.url = file[:url]
-          attachment.status = file[:status]
-          parsed_attachments << attachment
-        end
-      end
-      parsed_attachments
     end
 
     def self.parse_labels(labels)
