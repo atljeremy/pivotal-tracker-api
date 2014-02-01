@@ -3,6 +3,10 @@ module Scorer
 
     attr_accessor :name, :id, :initials, :email, :username
 
+    def self.fields
+      ['name', 'id', 'initials', 'email', 'username']
+    end
+
     def initialize(attributes={})
       update_attributes(attributes)
     end

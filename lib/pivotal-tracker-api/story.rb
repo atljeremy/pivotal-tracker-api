@@ -14,10 +14,10 @@ module Scorer
       ['url', 'name', 'description', 'story_type',
        'estimate', 'current_state', 'requested_by',
        'owned_by', 'labels', 'integration_id',
-       'deadline', 'comments', 'tasks']
+       'deadline', "comments(#{Scorer::Comment.fields.join(',')})", 'tasks']
     end
 
-    def self.parse_json_story(json_story, project_id, get_comments)
+    def self.parse_json_story(json_story, project_id)
       requested_by = json_story[:requested_by][:name] if !json_story[:requested_by].nil?
       story_id = json_story[:id].to_i
       estimate = json_story[:estimate] ? json_story[:estimate].to_i : -1
@@ -39,11 +39,7 @@ module Scorer
         deadline: json_story[:deadline]
       })
 
-      if get_comments
-        parsed_story.comments = get_story_comments(project_id, parsed_story)
-      else
-        parsed_story.comments = Scorer::Comment.parse_json_comments(json_story[:comments], parsed_story)
-      end
+      parsed_story.comments = Scorer::Comment.parse_json_comments(json_story[:comments], parsed_story)
       parsed_story.has_attachments = false
       if !parsed_story.comments.nil? && parsed_story.comments.count > 0
         parsed_story.comments.each do |note|
@@ -57,16 +53,12 @@ module Scorer
       parsed_story
     end
 
-    def self.parse_json_stories(json_stories, project_id, get_comments)
+    def self.parse_json_stories(json_stories, project_id)
       stories = Array.new
       json_stories.each do |story|
-        stories << parse_json_story(story, project_id, get_comments)
+        stories << parse_json_story(story, project_id)
       end
       stories
-    end
-
-    def self.get_story_comments(project_id, story)
-      PivotalService.comments(project_id, story, Scorer::Comment.fields)
     end
 
     def self.parse_tasks(tasks, story)

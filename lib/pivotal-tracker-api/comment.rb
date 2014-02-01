@@ -4,7 +4,8 @@ module Scorer
     attr_accessor :story, :project_id, :story_id, :id, :text, :author, :created_at, :updated_at, :file_attachments
 
     def self.fields
-      ['person', 'text', 'updated_at', 'id', 'created_at', 'story_id', 'file_attachments']
+      ["person(#{Scorer::Person.fields.join(',')})", 'text', 'updated_at', 'id',
+       'created_at', 'story_id', 'file_attachments']
     end
 
     def self.parse_json_comments(json_comments, story)
