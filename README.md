@@ -1,7 +1,7 @@
 pivotal-tracker-api
 ===================
 
-A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracke API v5.
+A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracker API v5.
 
 ### Basic Example
 
