@@ -53,7 +53,7 @@ module Scorer
       end
 
       def api_ssl_host(user=nil, password=nil)
-        user_password = (user && password) ? "#{user}:#{password}@" : ''
+        user_password = (user && password) ? "#{user}:#{CGI.escape(password)}@" : ''
         "https://#{user_password}www.pivotaltracker.com"
       end
 
