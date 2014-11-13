@@ -7,10 +7,10 @@ module Scorer
       update_attributes(attributes)
     end
 
-    def self.parse_json_iteration(json_iteration)
+    def self.parse_json_iteration(json_iteration, include_done)
       new({
         project_id: json_iteration[:project_id].to_i,
-        stories: parse_stories(json_iteration[:stories], json_iteration[:project_id].to_i),
+        stories: parse_stories(json_iteration[:stories], json_iteration[:project_id].to_i, include_done),
         story_ids: json_iteration[:story_ids],
         number: json_iteration[:number],
         team_strength: json_iteration[:team_strength],
@@ -22,11 +22,11 @@ module Scorer
 
     protected
 
-    def self.parse_stories(stories, project_id)
+    def self.parse_stories(stories, project_id, include_done)
       story_ids = Array.new
       stories.each { |story| story_ids << story[:id].to_i if !story[:id].nil? }
       project = PivotalService.one_project(project_id)
-      PivotalService.stories(project, true, story_ids, Scorer::Story.fields)
+      PivotalService.stories(project, true, story_ids, Scorer::Story.fields, include_done)
     end
 
     def update_attributes(attrs)

@@ -37,16 +37,20 @@ class PivotalService
       return @iteration if !@iteration.nil? && @iteration.project_id == project_id
 
       api_url = "/projects/#{project_id}/iterations?"
-      if scope
-        if scope != 'current'
-          api_url = api_url + "&offset=#{offset}&limit=#{limit}"
-        end
-        api_url = api_url + "&scope=#{scope}"
+
+      if scope == 'current'
+        api_url = append_scope(api_url, scope)
+      elsif scope == 'done' || scope == 'backlog' || scope == 'current_backlog'
+        api_url = append_limit_offset(api_url, limit, offset)
+        api_url = append_scope(api_url, scope)
+      else
+        api_url = append_limit_offset(api_url, limit, offset)
       end
+
       api_url = append_fields(api_url, fields)
       response = Scorer::Client.get_with_caching(api_url)
       json_iterations = JSON.parse(response, {:symbolize_names => true})
-      @iteration = Scorer::Iteration.parse_json_iteration(json_iterations[0])
+      @iteration = Scorer::Iteration.parse_json_iteration(json_iterations[0], (scope == 'done'))
     end
 
     def all_stories(project_label, project, fields=[])
@@ -65,10 +69,14 @@ class PivotalService
       Scorer::Story.parse_json_story(json_story, project.id)
     end
 
-    def stories(project, should_cache, ids=[], fields=[])
+    def stories(project, should_cache, ids=[], fields=[], include_done=false)
       @stories = Array.new
       api_url = append_fields('/projects' + "/#{project.id}/stories", fields)
-      api_url = api_url.rindex('?fields=') ? "#{api_url}&filter=id%3A" : "#{api_url}?filter=id%3A"
+      if api_url.rindex('?fields=')
+        api_url = "#{api_url}&filter=includedone%3A#{include_done}%20id%3A"
+      else
+        api_url = "#{api_url}?filter=includedone%3A#{include_done}%20id%3A"
+      end
       if ids.size == 1
         api_url = api_url + ids[0].to_s
         if should_cache
@@ -109,13 +117,21 @@ class PivotalService
 
     private
 
-      def append_fields(api_url, fields)
-        url = api_url
-        fields.each do |field|
-          url = url.rindex('?fields=') ? url + ",#{field}" : url + "?fields=#{field}"
-        end
-        url
+    def append_fields(api_url, fields)
+      url = api_url
+      fields.each do |field|
+        url = url.rindex('?fields=') ? url + ",#{field}" : url + "?fields=#{field}"
       end
+      url
+    end
+
+    def append_scope(api_url, scope)
+      api_url + "&scope=#{scope}"
+    end
+
+    def append_limit_offset(api_url, limit, offset)
+      api_url + "&limit=#{limit}&offset=#{offset}"
+    end
 
   end
 end
