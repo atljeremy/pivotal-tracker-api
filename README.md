@@ -53,7 +53,6 @@ end
 # Get an Iteration and it's Stories
 def get_iteration
   @project_id = params[:project_id]
-  @project    = PivotalService.one_project(@project_id, Scorer::Project.fields)
   @iteration  = PivotalService.iterations(@project_id, 'current')
   @stories    = @iteration.stories
 end
