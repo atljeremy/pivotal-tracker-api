@@ -1,12 +1,8 @@
 module Scorer
-  class Activity
+  class Activity < Scorer::Base
 
     attr_accessor :project_id, :occurred_at, :highlight, :primary_resources, :changes, :guid, :kind, :performed_by_id,
                   :performed_by, :message, :project_version
-
-    def initialize(attributes={})
-      update_attributes(attributes)
-    end
 
     def self.parse_json_activity(json_activity, project_id)
       json_activity.each do |activity|
@@ -30,12 +26,6 @@ module Scorer
 
     def self.parse_person(json_person)
       Scorer::Person.parse_json_person(json_person)
-    end
-
-    def update_attributes(attrs)
-      attrs.each do |key, value|
-        self.send("#{key}=", value)
-      end
     end
 
   end

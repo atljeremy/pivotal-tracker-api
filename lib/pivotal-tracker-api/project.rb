@@ -1,5 +1,5 @@
 module Scorer
-  class Project
+  class Project < Scorer::Base
 
     attr_accessor :updated_at, :bugs_and_chores_are_estimatable, :enable_planned_mode, :public, :story_ids, :name,
                   :iteration_length, :start_time, :version, :label_ids, :description, :profile_content,
@@ -49,14 +49,6 @@ module Scorer
 
     def get_labels
       self.labels.split(',')
-    end
-
-    protected
-
-    def update_attributes(attrs)
-      attrs.each do |key, value|
-        self.send("#{key}=", value.is_a?(Array) ? value.join(',') : value )
-      end
     end
 
   end

@@ -1,14 +1,10 @@
 module Scorer
-  class Story
+  class Story < Scorer::Base
 
     attr_accessor :project_id, :follower_ids, :updated_at, :current_state, :name, :comment_ids, :url, :story_type,
                   :label_ids, :description, :requested_by_id, :planned_iteration_number, :external_id, :deadline,
                   :owned_by_id, :owned_by, :created_at, :estimate, :kind, :id, :task_ids, :integration_id, :accepted_at,
                   :comments, :tasks, :has_attachments, :requested_by, :labels, :notes, :started_at, :status
-
-    def initialize(attributes={})
-      update_attributes(attributes)
-    end
 
     def self.fields
       ['url', 'name', 'description', 'story_type',

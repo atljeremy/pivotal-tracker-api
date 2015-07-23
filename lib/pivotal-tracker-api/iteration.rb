@@ -1,11 +1,7 @@
 module Scorer
-  class Iteration
+  class Iteration < Scorer::Base
 
     attr_accessor :project_id, :length, :planned, :stories, :story_ids, :number, :team_strength, :finish, :kind, :start
-
-    def initialize(attributes={})
-      update_attributes(attributes)
-    end
 
     def self.parse_json_iteration(json_iteration, include_done)
       new({
@@ -27,12 +23,6 @@ module Scorer
       stories.each { |story| story_ids << story[:id].to_i if !story[:id].nil? }
       project = PivotalService.one_project(project_id)
       PivotalService.stories(project, true, story_ids, Scorer::Story.fields, include_done)
-    end
-
-    def update_attributes(attrs)
-      attrs.each do |key, value|
-        self.send("#{key}=", value )
-      end
     end
 
   end

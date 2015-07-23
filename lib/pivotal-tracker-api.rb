@@ -1,5 +1,6 @@
 require 'rest_client'
 
+require File.join(File.dirname(__FILE__), 'pivotal-tracker-api', 'base')
 require File.join(File.dirname(__FILE__), 'pivotal-tracker-api', 'client')
 require File.join(File.dirname(__FILE__), 'pivotal-tracker-api', 'project')
 require File.join(File.dirname(__FILE__), 'pivotal-tracker-api', 'attachment')
