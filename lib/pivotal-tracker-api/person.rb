@@ -1,5 +1,5 @@
 module Scorer
-  class Person < Scorer::Base
+  class Person < Base
 
     attr_accessor :name, :id, :initials, :email, :username
 

@@ -1,5 +1,5 @@
 module Scorer
-  class Comment < Scorer::Base
+  class Comment < Base
 
     attr_accessor :project_id, :story_id, :id, :text, :author, :created_at, :updated_at, :file_attachments
 

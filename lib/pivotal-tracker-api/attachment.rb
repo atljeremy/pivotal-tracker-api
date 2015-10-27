@@ -1,5 +1,5 @@
 module Scorer
-  class Attachment < Scorer::Base
+  class Attachment < Base
 
     attr_accessor :filename, :id, :created_at, :uploaded_by, :big_url,
                   :width, :height, :download_url, :thumbnail_url, :size, :content_type

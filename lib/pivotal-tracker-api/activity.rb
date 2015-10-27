@@ -1,5 +1,5 @@
 module Scorer
-  class Activity < Scorer::Base
+  class Activity < Base
 
     attr_accessor :project_id, :occurred_at, :highlight, :primary_resources, :changes, :guid, :kind, :performed_by_id,
                   :performed_by, :message, :project_version

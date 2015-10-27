@@ -1,5 +1,5 @@
 module Scorer
-  class Iteration < Scorer::Base
+  class Iteration < Base
 
     attr_accessor :project_id, :length, :planned, :stories, :story_ids, :number, :team_strength, :finish, :kind, :start
 

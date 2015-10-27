@@ -1,5 +1,5 @@
 module Scorer
-  class Story < Scorer::Base
+  class Story < Base
 
     attr_accessor :project_id, :follower_ids, :updated_at, :current_state, :name, :comment_ids, :url, :story_type,
                   :label_ids, :description, :requested_by_id, :planned_iteration_number, :external_id, :deadline,
@@ -45,7 +45,7 @@ module Scorer
           end
         end
       end
-      parsed_story.tasks = parse_tasks(json_story[:tasks], json_story)
+      parsed_story.tasks = Task.parse_tasks(json_story[:tasks], json_story)
       parsed_story
     end
 
