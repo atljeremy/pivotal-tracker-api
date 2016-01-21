@@ -1,4 +1,5 @@
 require 'json'
+require 'pry'
 
 class PivotalService
 
@@ -34,7 +35,7 @@ class PivotalService
     end
 
     def iterations(project_id, scope, fields=[], limit=1, offset=1)
-      return @iteration if !@iteration.nil? && @iteration.project_id == project_id
+      return @iterations if !@iterations.nil? && @iterations.last.project_id == project_id
 
       api_url = "/projects/#{project_id}/iterations?"
 
@@ -50,7 +51,11 @@ class PivotalService
       api_url = append_fields(api_url, fields)
       response = Scorer::Client.get_with_caching(api_url)
       json_iterations = JSON.parse(response, {:symbolize_names => true})
-      @iteration = Scorer::Iteration.parse_json_iteration(json_iterations[0], (scope == 'done'))
+      @iterations = []
+      json_iterations.each do |iteration|
+        @iterations << Scorer::Iteration.parse_json_iteration(iteration, (scope == 'done'))
+      end
+      @iterations
     end
 
     def all_stories(project_label, project, fields=[])
