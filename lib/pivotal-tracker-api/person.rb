@@ -1,21 +1,25 @@
-module Scorer
+module PivotalAPI
   class Person < Base
 
-    attr_accessor :name, :id, :initials, :email, :username
+    attr_accessor :name, :id, :initials, :email, :username, :kind
 
     def self.fields
-      ['name', 'id', 'initials', 'email', 'username']
+      ['name', 'id', 'initials', 'email', 'username', 'kind']
     end
 
-    def self.parse_json_person(json_person)
+    def self.unknown
       new({
-        id: json_person[:id].to_i,
-        name: json_person[:name],
-        initials: json_person[:initals],
-        email: json_person[:email],
-        username: json_person[:username]
+        id: '0',
+        name: 'Unkown',
+        initials: 'Unkown',
+        username: 'Unkown',
+        email: 'Unkown',
+        kind: 'person'
       })
     end
 
+  end
+  
+  class People < Person
   end
 end

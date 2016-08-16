@@ -1,4 +1,4 @@
-module Scorer
+module PivotalAPI
   class Client
 
     class NoToken < StandardError; end
@@ -6,7 +6,6 @@ module Scorer
     class << self
 
       attr_writer :token, :ssl_enabled
-      attr_reader :api_host, :api_projects_path
 
       def get(path)
         begin
@@ -58,7 +57,7 @@ module Scorer
       end
 
       def api_host
-        @api_host ||= 'http://www.pivotaltracker.com'
+        @api_host ||= 'https://www.pivotaltracker.com'
       end
 
       def api_projects_path

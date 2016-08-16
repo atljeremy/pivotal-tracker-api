@@ -10,7 +10,7 @@ A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracker
 def set_token
   # This will set the @token in the Client class. Class caching must be enabled for the token to persist.
   # config.cache_classes = true
-  PivotalService.set_token(your_token_here)
+  PivotalAPI::Service.set_token(your_token_here)
 end
 ```
 
@@ -21,7 +21,7 @@ def get_user_token
   pass = params[:pass]
   # This will set the @token in the Client class. Class caching must be enabled for the token to persist.
   # config.cache_classes = true
-  token = Scorer::Client.token(email, pass)
+  token = PivotalAPI::Client.token(email, pass)
   # do something with the token
 end
 ```
@@ -29,14 +29,14 @@ end
 ```ruby
 # Get all of the users Projects
 def projects
-  @projects = PivotalService.all_projects(Scorer::Project.fields)
+  @projects = PivotalAPI::Service.all_projects(PivotalAPI::Project.fields)
 end
 ```
 
 ```ruby
 # Get only 1 of the users Projects
 def project
-  @project = PivotalService.one_project(params[:project_id], Scorer::Project.fields)
+  @project = PivotalAPI::Service.one_project(params[:project_id], PivotalAPI::Project.fields)
 end
 ```
 
@@ -45,7 +45,7 @@ end
 def stories_by_label
   project_label   = params[:project_label]
   @project_label  = CGI.escape(project_label) if project_label
-  @stories = PivotalService.all_stories(@project_label, @project, Scorer::Story.fields) if @project_label
+  @stories = PivotalAPI::Service.all_stories(@project_label, @project, PivotalAPI::Story.fields) if @project_label
 end
 ```
 
@@ -53,12 +53,12 @@ end
 # Get an Iteration and it's Stories
 def get_iteration
   @project_id = params[:project_id]
-  @iteration  = PivotalService.iterations(@project_id, 'current')
+  @iteration  = PivotalAPI::Service.iterations(@project_id, 'current')
   @stories    = @iteration.stories
 end
 ```
 
-For additional infomation on how to interface with this gem and use it to communicate with the Pivotal Tracker API v5 see the [PivotalService](https://github.com/atljeremy/pivotal-tracker-api/blob/master/lib/pivotal-tracker-api/pivotal_service.rb) class.
+For additional infomation on how to interface with this gem and use it to communicate with the Pivotal Tracker API v5 see the [PivotalAPI::Service](https://github.com/atljeremy/pivotal-tracker-api/blob/master/lib/pivotal-tracker-api/pivotal_service.rb) class.
 
 ### Contributing to pivotal-tracker-api
  

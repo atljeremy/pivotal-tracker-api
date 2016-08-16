@@ -1,8 +1,20 @@
-module Scorer
+module PivotalAPI
   class Base
 
     def initialize(attributes={})
       update_attributes(attributes)
+    end
+    
+    def self.from_json(json)
+      object = nil
+      if json.is_a?(Array)
+        vals = []
+        json.each { |val| vals << new(val) }
+        object = vals
+      else
+        object = new(json)
+      end
+      object
     end
 
     def to_json
@@ -21,7 +33,7 @@ module Scorer
       attrs.each do |key, value|
         # self.send("#{key}=", value.is_a?(Array) ? value.join(',') : value )
         self.send("#{key}=", value)
-      end
+      end if attrs
     end
 
   end

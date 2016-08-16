@@ -1,41 +1,174 @@
-module Scorer
+# PROPERTIES
+# id int
+#  —  Database id of the story. This field is read only. This field is always returned.
+#
+# project_id int
+#  —  id of the project.
+#
+# name string[5000]
+# Required On Create  —  Name of the story. This field is required on create.
+#
+# description string[20000]
+#  —  In-depth explanation of the story requirements.
+#
+# story_type enumerated string
+#  —  Type of story.
+# Valid enumeration values: feature, bug, chore, release
+#
+# current_state enumerated string
+#  —  Story's state of completion.
+# Valid enumeration values: accepted, delivered, finished, started, rejected, planned, unstarted, unscheduled
+#
+# estimate float
+#  —  Point value of the story.
+#
+# accepted_at datetime
+#  —  Acceptance time.
+#
+# deadline datetime
+#  —  Due date/time (for a release-type story).
+#
+# requested_by_id int
+#  —  The id of the person who requested the story. In API responses, this attribute may be requested_by_id or requested_by.
+#
+# owned_by_id int
+#  —  The id of the person who owns the story. In API responses, this attribute may be owned_by_id or owned_by.
+#
+# owner_ids List[int]
+#  —  IDs of the current story owners. By default this will be included in responses as an array of nested structures, using the key owners. In API responses, this attribute may be owner_ids or owners.
+#
+# label_ids List[int]
+#  —  IDs of labels currently applied to story. By default this will be included in responses as an array of nested structures, using the key labels. In API responses, this attribute may be label_ids or labels.
+#
+# task_ids List[int]
+#  —  IDs of tasks currently on the story. This field is writable only on create. This field is excluded by default. In API responses, this attribute may be task_ids or tasks.
+#
+# follower_ids List[int]
+#  —  IDs of people currently following the story. This field is excluded by default. In API responses, this attribute may be follower_ids or followers.
+#
+# comment_ids List[int]
+#  —  IDs of comments currently on the story. This field is writable only on create. This field is excluded by default. In API responses, this attribute may be comment_ids or comments.
+#
+# created_at datetime
+#  —  Creation time. This field is writable only on create.
+#
+# updated_at datetime
+#  —  Time of last update. This field is read only.
+#
+# before_id int
+#  —  ID of the story that the current story is located before. Null if story is last one in the project. This field is excluded by default.
+#
+# after_id int
+#  —  ID of the story that the current story is located after. Null if story is the first one in the project. This field is excluded by default.
+#
+# integration_id int
+#  —  ID of the integration API that is linked to this story. In API responses, this attribute may be integration_id or integration.
+#
+# external_id string[255]
+#  —  The integration's specific ID for the story. (Note that this attribute does not indicate an association to another resource.)
+#
+# url string
+#  —  The url for this story in Tracker. This field is read only.
+#
+# transitions List[story_transition]
+#  —  All state transitions for the story. This field is read only. This field is excluded by default.
+#
+# cycle_time_details cycle_time_details
+#  —  All information regarding a story's cycle time and state transitions (duration and occurrences). This field is read only. This field is excluded by default.
+#
+# kind string
+#  —  The type of this object: story. This field is read only.
+
+module PivotalAPI
   class Story < Base
 
-    attr_accessor :project_id, :follower_ids, :updated_at, :current_state, :name, :comment_ids, :url, :story_type,
-                  :label_ids, :description, :requested_by_id, :planned_iteration_number, :external_id, :deadline,
-                  :owned_by_id, :owned_by, :created_at, :estimate, :kind, :id, :task_ids, :integration_id, :accepted_at,
-                  :comments, :tasks, :has_attachments, :requested_by, :labels, :notes, :started_at, :status
+    attr_accessor :project_id, :follower_ids, :followers, :updated_at, :current_state, 
+                  :name, :comment_ids, :url, :story_type, :label_ids, :description, 
+                  :requested_by_id, :external_id, :deadline, :owner_ids, :owners, 
+                  :created_at, :estimate, :kind, :id, :task_ids, :integration_id, 
+                  :accepted_at, :comments, :tasks, :has_attachments, :requested_by, 
+                  :labels, :transitions, :after_id,
+                  :before_id, :cycle_time_details
 
     def self.fields
       ['url', 'name', 'description', 'story_type',
        'estimate', 'current_state', 'requested_by',
-       'owned_by', 'labels', 'integration_id',
-       'deadline', "comments(#{Scorer::Comment.fields.join(',')})", 'tasks']
+       'owners', 'labels', 'integration_id',
+       'deadline', "comments(#{PivotalAPI::Comment.fields.join(',')})", 
+       'tasks', 'transitions', 'followers', 'cycle_time_details',
+       'accepted_at']
+    end
+    
+    def self.from_json(json)
+      parse_json_story(json)
     end
 
-    def self.parse_json_story(json_story, project_id)
-      requested_by = json_story[:requested_by][:name] if !json_story[:requested_by].nil?
-      story_id = json_story[:id].to_i
+    def overdue?
+      return false if transitions.nil?
+      duration_hrs = 0
+      started = nil
+      transitions.each do |transition|
+        case transition.state
+        when 'started'
+          started = Time.parse(transition.occurred_at.to_s)
+        when 'finished'
+          duration_hrs += hours_between(started, Time.parse(transition.occurred_at.to_s)) if started
+        end
+      end
+      
+      if current_state == 'accepted'
+        duration_hrs += hours_between(started, Time.parse(accepted_at.to_s))
+      elsif current_state != 'accepted' && started
+        duration_hrs += hours_between(started, Time.now)
+      end
+      
+      duration_hrs >= estimate
+    end
+
+    protected
+    
+    def hours_between(start_time, end_time)
+      return 0 unless start_time && end_time
+      seconds = start_time.business_time_until(end_time)
+      minutes = seconds / 60
+      hours = minutes / 60
+      hours.round
+    end
+    
+    def self.parse_json_story(json_story)
       estimate = json_story[:estimate] ? json_story[:estimate].to_i : -1
-      current_state = json_story[:current_state]
       parsed_story = new({
-        id: story_id,
+        id: json_story[:id].to_i,
         url: json_story[:url],
-        project_id: project_id,
+        project_id: json_story[:project_id],
         name: json_story[:name],
         description: json_story[:description],
         story_type: json_story[:story_type],
         estimate: estimate,
-        current_state: current_state,
-        requested_by: requested_by,
-        owned_by_id: json_story[:owned_by_id],
-        owned_by: json_story[:owned_by],
-        labels: parse_labels(json_story[:labels]),
+        current_state: json_story[:current_state],
+        requested_by_id: json_story[:requested_by_id],
+        requested_by: PivotalAPI::Person.from_json(json_story[:requested_by]),
+        owner_ids: json_story[:owner_ids],
+        owners: PivotalAPI::People.from_json(json_story[:owners]),
+        follower_ids: json_story[:follower_ids],
+        followers: PivotalAPI::People.from_json(json_story[:followers]),
+        label_ids: json_story[:label_ids],
+        labels: PivotalAPI::Labels.from_json(json_story[:labels]),
         integration_id: json_story[:integration_id],
-        deadline: json_story[:deadline]
+        deadline: (DateTime.parse(json_story[:deadline]) if json_story[:deadline]),
+        transitions: PivotalAPI::StoryTransitions.from_json(json_story[:transitions]),
+        updated_at: (DateTime.parse(json_story[:updated_at]) if json_story[:updated_at]),
+        created_at: (DateTime.parse(json_story[:created_at]) if json_story[:created_at]),
+        comment_ids: json_story[:comment_ids],
+        kind: json_story[:kind],
+        task_ids: json_story[:task_ids],
+        tasks: PivotalAPI::Tasks.from_json(json_story[:tasks]),
+        accepted_at: (DateTime.parse(json_story[:accepted_at]) if json_story[:accepted_at]),
+        cycle_time_details: PivotalAPI::CycleTimeDetails.from_json(json_story[:cycle_time_details]),
+        external_id: json_story[:external_id]
       })
 
-      parsed_story.comments = Scorer::Comment.parse_json_comments(json_story[:comments], parsed_story)
+      parsed_story.comments = PivotalAPI::Comments.from_json(json_story[:comments])
       parsed_story.has_attachments = false
       if !parsed_story.comments.nil? && parsed_story.comments.count > 0
         parsed_story.comments.each do |note|
@@ -45,125 +178,29 @@ module Scorer
           end
         end
       end
-      parsed_story.tasks = Task.parse_tasks(json_story[:tasks], json_story)
+      
       parsed_story
-    end
-
-    def self.parse_json_stories(json_stories, project_id)
-      stories = Array.new
-      json_stories.each do |story|
-        stories << parse_json_story(story, project_id)
-      end
-      stories
-    end
-
-    def self.parse_tasks(tasks, story)
-      parsed_tasks = Array.new
-      if tasks
-        tasks.each do |task|
-          parsed_tasks <<  Scorer::Task.new({
-            id: task[:id].to_i,
-            description: task[:description],
-            complete: task[:complete],
-            created_at: DateTime.parse(task[:created_at].to_s).to_s,
-            story: story
-          })
-        end
-      end
-      parsed_tasks
-    end
-
-    def self.parse_labels(labels)
-      parsed_labels = ''
-      labels.each do |label|
-        parsed_labels = parsed_labels + "#{label[:name]},"
-      end
-      parsed_labels
-    end
-
-    def self.get_story_started_at(project_id, story_id)
-      events = Hash.new
-      current_started_at = nil
-      current_accepted_at = nil
-      activity = PivotalService.activity(project_id, story_id, 40)
-      activity.each do |event|
-        case event[:highlight]
-          when 'started'
-            started_at = event[:occurred_at]
-            if current_started_at.nil? || current_started_at < started_at || current_accepted_at === started_at
-              current_started_at = started_at
-              events[:started_at] = current_started_at
-            end
-          when 'accepted'
-            accepted_at = event[:occurred_at]
-            if current_accepted_at.nil? || current_accepted_at < accepted_at
-              current_accepted_at = accepted_at
-              events[:accepted_at] = current_accepted_at
-            end
-        end
-      end
-      events
-    end
-
-    def self.get_story_status(event_times, points, current_state)
-      status = {status: 'ok', hours: -1}
-      if !event_times.nil? && !event_times[:started_at].nil? && points > -1 && current_state != 'unstarted'
-
-        # Times
-        started_at_time = Time.parse(event_times[:started_at])
-
-        # Due Dates
-        due_date = (points.to_i.business_hours.after(started_at_time)).to_datetime
-        almost_due_date = ((points - 1).to_i.business_hours.after(started_at_time)).to_datetime
-
-        if current_state == 'accepted' && !event_times[:accepted_at].nil?
-          accepted_at = event_times[:accepted_at]
-          hours = get_hours_between_times(started_at_time, Time.parse(accepted_at))
-          if accepted_at.to_datetime > due_date || hours >= points
-            status = {status: 'overdue', hours: hours}
-          elsif accepted_at >= almost_due_date || hours == (points - 1)
-            status = {status: 'almost_due', hours: hours}
-          else
-            status = {status: 'ok', hours: hours}
-          end
-        else
-          now = DateTime.now
-          hours = get_hours_between_times(started_at_time, Time.parse(now.to_s))
-          if now >= due_date || hours >= points
-            status = {status: 'overdue', hours: hours}
-          elsif now >= almost_due_date || hours == (points - 1)
-            status = {status: 'almost_due', hours: hours}
-          else
-            status = {status: 'ok', hours: hours}
-          end
-        end
-
-      end
-      status
-    end
-
-    protected
-
-    def self.get_hours_between_times(time1, time2)
-
-      # Check to see if both times occurred outside of business hours.
-      # If so, calculate the total time in between each time
-      if Time::roll_forward(time1) == Time::roll_forward(time2)
-        return (((time2 - time1) / 60) / 60).round
-      end
-
-      ((time1.business_time_until(time2) / 60) / 60).round
     end
 
     def self.est_time_zone(time)
       time.in_time_zone("Eastern Time (US & Canada)")
     end
 
-    def update_attributes(attrs)
-      attrs.each do |key, value|
-        self.send("#{key}=", value.is_a?(Array) ? value.join(',') : value )
-      end
+  end
+  
+  class Stories < Story
+    
+    def self.from_json(json)
+      parse_json_stories(json)
     end
-
+    
+    protected
+    
+    def self.parse_json_stories(json_stories)
+      stories = []
+      json_stories.each { |story| stories << parse_json_story(story) }
+      stories
+    end
+    
   end
 end
