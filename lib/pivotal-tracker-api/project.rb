@@ -61,7 +61,7 @@ module PivotalAPI
     end
     
     def iterations(opts={})
-      project_id = opts[:project_id]
+      opts[:project_id] = id
       opts[:parameters] = {} unless opts[:parameters]
       opts[:fields] = PivotalAPI::Iteration.fields if opts[:fields].nil?
       
