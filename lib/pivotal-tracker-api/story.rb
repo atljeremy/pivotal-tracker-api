@@ -102,9 +102,9 @@ module PivotalAPI
     def self.from_json(json)
       parse_json_story(json)
     end
-
-    def overdue?
-      return false if transitions.nil?
+    
+    def hours
+      return 0 if transitions.nil?
       duration_hrs = 0
       started = nil
       transitions.each do |transition|
@@ -122,7 +122,11 @@ module PivotalAPI
         duration_hrs += hours_between(started, Time.now)
       end
       
-      duration_hrs >= estimate
+      duration_hrs
+    end
+
+    def overdue?
+      hours >= estimate
     end
 
     protected
