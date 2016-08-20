@@ -5,7 +5,7 @@ module PivotalAPI
 
     class << self
 
-      attr_writer :token, :ssl_enabled
+      attr_writer :token, :username, :password
 
       def get(path)
         begin
@@ -14,6 +14,20 @@ module PivotalAPI
           puts "Encountered Error in get: #{$!}"
           clear_connections
           set_response_headers(connection["#{api_version}#{path}"].get)
+        end
+      end
+      
+      def ssl_get(path)
+        raise ArgumentError.new("missing required fields :username and :password. " \
+                                "Set these using PivotalAPI::Client.username = USERNAME " \
+                                "and PivotalAPI::Client.password = PASSWORD.") unless @username && @password
+        begin
+          puts "ssl_connection: #{ssl_connection}"
+          set_response_headers(ssl_connection["#{api_version}#{path}"].get)
+        rescue
+          puts "Encountered Error in ssl_get: #{$!}"
+          clear_connections
+          set_response_headers(ssl_connection["#{api_version}#{path}"].get)
         end
       end
 
@@ -36,32 +50,29 @@ module PivotalAPI
         @connections ||= {}
         cached_connection? ? cached_connection : new_connection
       end
+      
+      def ssl_connection
+        raise NoToken if @username.to_s.empty?
+        @connections ||= {}
+        cached_ssl_connection? ? cached_ssl_connection : new_ssl_connection
+      end
 
       def clear_connections
         @connections = nil
       end
 
-      def ssl_enabled
-        @ssl_enabled || true
-      end
-
-      def token(username, password)
-        response = RestClient.get("#{api_ssl_host(username, password)}#{api_version}/me")
-        json = JSON.parse(response, {:symbolize_names => true})
-        @token = json[:api_token]
-      end
-
-      def api_ssl_host(user=nil, password=nil)
-        user_password = (user && password) ? "#{user}:#{CGI.escape(password)}@" : ''
-        "https://#{user_password}www.pivotaltracker.com"
+      def api_ssl_host
+        "https://#{@username}:#{CGI.escape(@password)}@www.pivotaltracker.com"
       end
 
       def api_host
         @api_host ||= 'https://www.pivotaltracker.com'
       end
-
-      def api_projects_path
-        @api_projects_path ||= "#{ssl_enabled ? api_ssl_host : api_host}#{api_version}/projects"
+      
+      def token=(val)
+        @username = nil
+        @password = nil
+        @token = val
       end
 
       protected
@@ -86,7 +97,19 @@ module PivotalAPI
         end
 
         def new_connection
-          @connections[@token] = RestClient::Resource.new("#{ssl_enabled ? api_ssl_host : api_host}", :headers => {'X-TrackerToken' => @token, 'Content-Type' => 'application/json'})
+          @connections[@token] = RestClient::Resource.new(api_host, :headers => {'X-TrackerToken' => @token, 'Content-Type' => 'application/json'})
+        end
+        
+        def cached_ssl_connection?
+          !@connections[@username].nil?
+        end
+
+        def cached_ssl_connection
+          @connections[@username]
+        end
+        
+        def new_ssl_connection
+          @connections[@username] = RestClient::Resource.new(api_ssl_host, :headers => {'Content-Type' => 'application/json'})
         end
 
     end

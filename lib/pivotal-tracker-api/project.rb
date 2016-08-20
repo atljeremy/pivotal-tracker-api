@@ -19,7 +19,7 @@ module PivotalAPI
       end
       
       def retrieve(project_id)
-        PivotalAPI::Service.project(project_id: project_id, fields: PivotalAPI::Project.fields)
+        Service.project(project_id: project_id, fields: Project.fields)
       end
       
       protected
@@ -41,31 +41,31 @@ module PivotalAPI
     def activity(opts={})
       opts[:project_id] = id
       
-      PivotalAPI::Service.activity(opts)
+      Service.activity(opts)
     end
     
     def story(opts={})
       opts[:project_id] = id
       opts[:parameters] = {} unless opts[:parameters]
-      opts[:parameters][:fields] = PivotalAPI::Story.fields
+      opts[:parameters][:fields] = Story.fields
       
-      PivotalAPI::Service.story(opts)
+      Service.story(opts)
     end
     
     def stories(opts={})
       opts[:project_id] = id
       opts[:parameters] = {} unless opts[:parameters]
-      opts[:parameters][:fields] = PivotalAPI::Story.fields
+      opts[:parameters][:fields] = Story.fields
       
-      PivotalAPI::Service.stories(opts)
+      Service.stories(opts)
     end
     
     def iterations(opts={})
       opts[:project_id] = id
       opts[:parameters] = {} unless opts[:parameters]
-      opts[:fields] = PivotalAPI::Iteration.fields if opts[:fields].nil?
+      opts[:fields] = Iteration.fields if opts[:fields].nil?
       
-      PivotalAPI::Service.iterations(opts)
+      Service.iterations(opts)
     end
     
     def current_iteration
@@ -87,7 +87,7 @@ module PivotalAPI
     class << self
       
       def retrieve()
-        PivotalAPI::Service.projects(fields: PivotalAPI::Project.fields)
+        Service.projects(fields: Project.fields)
       end
     
       def from_json(json)

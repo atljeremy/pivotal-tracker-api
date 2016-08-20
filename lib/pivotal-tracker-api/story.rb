@@ -151,28 +151,28 @@ module PivotalAPI
         estimate: estimate,
         current_state: json_story[:current_state],
         requested_by_id: json_story[:requested_by_id],
-        requested_by: PivotalAPI::Person.from_json(json_story[:requested_by]),
+        requested_by: Person.from_json(json_story[:requested_by]),
         owner_ids: json_story[:owner_ids],
-        owners: PivotalAPI::People.from_json(json_story[:owners]),
+        owners: People.from_json(json_story[:owners]),
         follower_ids: json_story[:follower_ids],
-        followers: PivotalAPI::People.from_json(json_story[:followers]),
+        followers: People.from_json(json_story[:followers]),
         label_ids: json_story[:label_ids],
-        labels: PivotalAPI::Labels.from_json(json_story[:labels]),
+        labels: Labels.from_json(json_story[:labels]),
         integration_id: json_story[:integration_id],
         deadline: (DateTime.parse(json_story[:deadline]) if json_story[:deadline]),
-        transitions: PivotalAPI::StoryTransitions.from_json(json_story[:transitions]),
+        transitions: StoryTransitions.from_json(json_story[:transitions]),
         updated_at: (DateTime.parse(json_story[:updated_at]) if json_story[:updated_at]),
         created_at: (DateTime.parse(json_story[:created_at]) if json_story[:created_at]),
         comment_ids: json_story[:comment_ids],
         kind: json_story[:kind],
         task_ids: json_story[:task_ids],
-        tasks: PivotalAPI::Tasks.from_json(json_story[:tasks]),
+        tasks: Tasks.from_json(json_story[:tasks]),
         accepted_at: (DateTime.parse(json_story[:accepted_at]) if json_story[:accepted_at]),
-        cycle_time_details: PivotalAPI::CycleTimeDetails.from_json(json_story[:cycle_time_details]),
+        cycle_time_details: CycleTimeDetails.from_json(json_story[:cycle_time_details]),
         external_id: json_story[:external_id]
       })
 
-      parsed_story.comments = PivotalAPI::Comments.from_json(json_story[:comments])
+      parsed_story.comments = Comments.from_json(json_story[:comments])
       parsed_story.has_attachments = false
       if !parsed_story.comments.nil? && parsed_story.comments.count > 0
         parsed_story.comments.each do |note|

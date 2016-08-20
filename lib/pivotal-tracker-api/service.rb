@@ -8,6 +8,16 @@ module PivotalAPI
       def set_token(token)
         PivotalAPI::Client.token = token
       end
+      
+      def me(username, password)
+        PivotalAPI::Client.username = username
+        PivotalAPI::Client.password = password
+        response = PivotalAPI::Client.ssl_get("/me")
+        json_me = JSON.parse(response, {:symbolize_names => true})
+        me = PivotalAPI::Me.from_json(json_me)
+        PivotalAPI::Client.token = me.api_token
+        me
+      end
 
       def activity(opts={})
         # opts:

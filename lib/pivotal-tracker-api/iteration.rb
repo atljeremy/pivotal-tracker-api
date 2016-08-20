@@ -48,7 +48,7 @@ module PivotalAPI
                   :finish, :kind, :start, :velocity, :points, :effective_points, :analytics
 
     def self.fields
-      ['velocity', 'points', 'effective_points', 'analytics', "stories(#{PivotalAPI::Story.fields.join(',')})", 'team_strength', 
+      ['velocity', 'points', 'effective_points', 'analytics', "stories(#{Story.fields.join(',')})", 'team_strength', 
        'project_id', 'length', 'start', 'finish']
     end
 
@@ -61,7 +61,7 @@ module PivotalAPI
     def self.parse_json_iteration(json_iteration)
       new({
         project_id: json_iteration[:project_id].to_i,
-        stories: PivotalAPI::Stories.from_json(json_iteration[:stories]),
+        stories: Stories.from_json(json_iteration[:stories]),
         story_ids: json_iteration[:story_ids],
         number: json_iteration[:number],
         team_strength: json_iteration[:team_strength],

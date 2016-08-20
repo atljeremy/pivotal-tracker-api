@@ -54,7 +54,7 @@ module PivotalAPI
           guid: activity[:guid],
           kind: activity[:kind],
           performed_by_id: activity[:performed_by_id],
-          performed_by: PivotalAPI::Person.from_json(activity[:performed_by]),
+          performed_by: Person.from_json(activity[:performed_by]),
           message: activity[:message],
           project_version: activity[:project_version]
         })

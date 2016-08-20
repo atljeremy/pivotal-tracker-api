@@ -44,7 +44,7 @@ module PivotalAPI
                   :kind
 
     def self.fields
-      ["person(#{PivotalAPI::Person.fields.join(',')})", 'text', 'updated_at', 'id',
+      ["person(#{Person.fields.join(',')})", 'text', 'updated_at', 'id',
        'created_at', 'story_id', 'file_attachments', 'google_attachment_ids',
        'commit_identifier', 'commit_type', 'kind']
     end
@@ -54,15 +54,15 @@ module PivotalAPI
     end
     
     def self.parse_json_comment(comment)
-      person = PivotalAPI::Person.from_json(comment[:person]) if comment[:person]
-      person = PivotalAPI::Person.unkown if person.nil?
+      person = Person.from_json(comment[:person]) if comment[:person]
+      person = Person.unkown if person.nil?
       new({
         id: comment[:id].to_i,
         text: comment[:text],
         person: person,
         created_at: DateTime.parse(comment[:created_at].to_s),
         updated_at: DateTime.parse(comment[:updated_at].to_s),
-        file_attachments: PivotalAPI::FileAttachment.from_json(comment[:file_attachments]),
+        file_attachments: FileAttachments.from_json(comment[:file_attachments]),
         commit_identifier: comment[:commit_identifier],
         google_attachment_ids: comment[:google_attachment_ids],
         commit_type: comment[:commit_type],
