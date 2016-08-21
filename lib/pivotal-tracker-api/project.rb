@@ -11,7 +11,7 @@ module PivotalAPI
     class << self
 
       def fields
-        ['description', 'labels', 'name']
+        ['description', 'labels', 'name', 'current_velocity', 'velocity_averaged_over']
       end
 
       def from_json(json)
