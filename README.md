@@ -7,13 +7,11 @@ A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracker
 
 ```ruby
 # Use your personal pivotal token
-PivotalAPI::Service.set_token your_token_here
+PivotalAPI::Service.set_token A_PIVOTAL_TOKEN
 ```
 
 ```ruby
 # Authenticate a user using email / pass
-email = params[:email]
-pass = params[:pass]
 me = PivotalAPI::Me.retrieve('USERNAME', 'PASSWORD')
 # Note: PivotalAPI::Me.retrieve will automatically set the api token so there is no need to use PivotalAPI::Service.set_token if you use PivotalAPI::Me.retrieve to login
 ```
