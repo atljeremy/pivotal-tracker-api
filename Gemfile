@@ -10,7 +10,7 @@ gem 'business_time', '~> 0.7.6'
 group :development do
   gem 'rdoc', '~> 3.12'
   gem 'bundler', '~> 1.0'
-  gem 'jeweler', '~> 1.8'
+  gem 'jeweler', '~> 2.1'
 end
 
 group :test do
