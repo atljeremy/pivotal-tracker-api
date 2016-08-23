@@ -12,13 +12,13 @@ PivotalAPI::Service.set_token A_PIVOTAL_TOKEN
 
 ```ruby
 # Authenticate a user using email / pass
-me = PivotalAPI::Me.retrieve('USERNAME', 'PASSWORD')
+@me = PivotalAPI::Me.retrieve('USERNAME', 'PASSWORD')
 # Note: PivotalAPI::Me.retrieve will automatically set the api token so there is no need to use PivotalAPI::Service.set_token if you use PivotalAPI::Me.retrieve to login
 ```
 
 ```ruby
 # If you login using PivotalAPI::Me.retrieve, you can simply ask your Me object for your projects.
-@projects = me.projects
+@projects = @me.projects
 
 # If you set your personal pivotal token manually using PivotalAPI::Service.set_token, you can get your projects using the following.
 @projects = PivotalAPI::Projects.retrieve()
