@@ -6,59 +6,97 @@ A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracker
 ### Basic Example
 
 ```ruby
-# Use your personal Pivotal token
-def set_token
-  # This will set the @token in the Client class. Class caching must be enabled for the token to persist.
-  # config.cache_classes = true
-  PivotalAPI::Service.set_token(your_token_here)
-end
+# Use your personal pivotal token
+PivotalAPI::Service.set_token your_token_here
 ```
 
 ```ruby
 # Authenticate a user using email / pass
-def get_user_token
-  email = params[:email]
-  pass = params[:pass]
-  # This will set the @token in the Client class. Class caching must be enabled for the token to persist.
-  # config.cache_classes = true
-  token = PivotalAPI::Client.token(email, pass)
-  # do something with the token
-end
+email = params[:email]
+pass = params[:pass]
+me = PivotalAPI::Me.retrieve('USERNAME', 'PASSWORD')
+# Note: PivotalAPI::Me.retrieve will automatically set the api token so there is no need to use PivotalAPI::Service.set_token if you use PivotalAPI::Me.retrieve to login
 ```
 
 ```ruby
-# Get all of the users Projects
-def projects
-  @projects = PivotalAPI::Service.all_projects(PivotalAPI::Project.fields)
-end
+# If you login using PivotalAPI::Me.retrieve, you can simply ask your Me object for your projects.
+@projects = me.projects
+
+# If you set your personal pivotal token manually using PivotalAPI::Service.set_token, you can get your projects using the following.
+@projects = PivotalAPI::Projects.retrieve()
 ```
 
 ```ruby
-# Get only 1 of the users Projects
-def project
-  @project = PivotalAPI::Service.one_project(params[:project_id], PivotalAPI::Project.fields)
-end
+# To get a specific project, use the following.
+@project = PivotalAPI::Project.retrieve(PROJECT_ID)
 ```
 
 ```ruby
-# Get a Projects Stories by a specific Label
-def stories_by_label
-  project_label   = params[:project_label]
-  @project_label  = CGI.escape(project_label) if project_label
-  @stories = PivotalAPI::Service.all_stories(@project_label, @project, PivotalAPI::Story.fields) if @project_label
-end
+# Get a project's stories, this will return an array of PivotalAPI::Story instance's
+@stories = @project.stories
 ```
 
 ```ruby
-# Get an Iteration and it's Stories
-def get_iteration
-  @project_id = params[:project_id]
-  @iteration  = PivotalAPI::Service.iterations(@project_id, 'current')
-  @stories    = @iteration.stories
-end
+# Get a specific story for a project, this will return a PivotalAPI::Story instance
+@story = @project.story(STORY_ID)
 ```
 
-For additional infomation on how to interface with this gem and use it to communicate with the Pivotal Tracker API v5 see the [PivotalAPI::Service](https://github.com/atljeremy/pivotal-tracker-api/blob/master/lib/pivotal-tracker-api/pivotal_service.rb) class.
+```ruby
+# Get a story's comments, this will return an array of PivotalAPI::Comment instance's
+@comments = @story.comments
+```
+
+```ruby
+# Get a story's owners, this will return an array of PivotalAPI::Person instance's
+@owners = @story.owners
+```
+
+```ruby
+# Get a story's followers, this will return an array of PivotalAPI::Person instance's
+@followers = @story.followers
+```
+
+```ruby
+# Get a story's tasks, this will return an array of PivotalAPI::Task instance's
+@tasks = @story.tasks
+```
+
+```ruby
+# Get a story's transitions, this will return an array of PivotalAPI::StoryTransition instance's
+@transitions = @story.transitions
+```
+
+```ruby
+# Get a story's cycle time details, this will return ana array of PivotalAPI::CycleTimeDetails instance's
+@cycle_time_details = @story.cycle_time_details
+```
+
+```ruby
+# Get a project's activity, this will return an array of PivotalAPI::Activity instance's
+@stories = @project.activity
+```
+
+```ruby
+# Get a project's iterations, this will return an array of PivotalAPI::Iteration instance's
+@iterations = @project.iterations
+```
+
+```ruby
+# Get a project's current iteration
+@iteration = @project.current_iteration
+```
+
+```ruby
+# Get a project's next iteration
+@iteration = @project.next_iteration
+```
+
+```ruby
+# Get a project's previous iteration
+@iteration = @project.previous_iteration
+```
+
+For additional infomation on how to interface with this gem and use it to communicate with the Pivotal Tracker API v5 see the [PivotalAPI::Service](https://github.com/atljeremy/pivotal-tracker-api/blob/master/lib/pivotal-tracker-api/service.rb) class and the [Service Tests](https://github.com/atljeremy/pivotal-tracker-api/blob/master/test/test_service.rb).
 
 ### Contributing to pivotal-tracker-api
  
