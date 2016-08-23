@@ -3,7 +3,7 @@ pivotal-tracker-api
 
 A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracker API v5.
 
-[![Gem](https://img.shields.io/gem/v/pivotal-tracker-api.svg?maxAge=2592000)]() [![Gem](https://img.shields.io/gem/dtv/pivotal-tracker-api.svg?maxAge=2592000)]()
+[![Gem](https://img.shields.io/gem/v/pivotal-tracker-api.svg?maxAge=2592000)]() [![Gem](https://img.shields.io/gem/dtv/pivotal-tracker-api.svg?maxAge=2592000)]() [![GitHub stars](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star&maxAge=2592000)](https://github.com/atljeremy/pivotal-tracker-api.git)
 
 ### Basic Example
 
