@@ -3,6 +3,8 @@ pivotal-tracker-api
 
 A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracker API v5.
 
+[![Gem](https://img.shields.io/gem/v/pivotal-tracker-api.svg?maxAge=2592000)]()
+
 ### Basic Example
 
 ```ruby
