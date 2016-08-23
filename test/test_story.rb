@@ -13,7 +13,7 @@ class TestActivity < Test::Unit::TestCase
         description: "story description",
         story_type: "feature",
         estimate: 13,
-        current_state: "started",
+        current_state: "accepted",
         created_at: "2016-08-17T11:03:53-04:00",
         updated_at: "2016-08-17T11:03:53-04:00",
         kind: "story",
@@ -152,6 +152,15 @@ class TestActivity < Test::Unit::TestCase
             occurred_at: "2016-08-19T11:03:53-04:00",
             performed_by_id: 4,
             kind: "some-kind"
+          },
+          {
+            state: "accepted",
+            story_id: 1,
+            project_id: 2,
+            project_version: 3,
+            occurred_at: "2016-08-19T11:03:53-04:00",
+            performed_by_id: 4,
+            kind: "some-kind"
           }]
       })
     end
@@ -184,14 +193,14 @@ class TestActivity < Test::Unit::TestCase
       assert_equal(13, @story.estimate)
     end
     
-    should "have accurately detrmine if story is overdue?" do
+    should "have accurately determined if story is overdue?" do
       assert_equal(true, @story.overdue?)
       @story.estimate = 40
       assert_equal(false, @story.overdue?)
     end
     
     should "have a valid current_state" do
-      assert_equal("started", @story.current_state)
+      assert_equal("accepted", @story.current_state)
     end
     
     should "have a valid created_at date" do
