@@ -115,7 +115,6 @@ module PivotalAPI
           if prev_transition
             start_time = Time.parse(prev_transition.occurred_at.to_s)
             end_time = Time.parse(transition.occurred_at.to_s)
-            puts "finished: start_time: #{start_time} - end_time: #{end_time}"
             duration_hrs += hours_between(start_time, end_time)
           end
           prev_transition = transition
@@ -123,7 +122,6 @@ module PivotalAPI
           if prev_transition
             start_time = Time.parse(prev_transition.occurred_at.to_s)
             end_time = Time.parse(transition.occurred_at.to_s)
-            puts "delivered: start_time: #{start_time} - end_time: #{end_time}"
             duration_hrs += hours_between(start_time, end_time)
           end
           prev_transition = transition
@@ -131,7 +129,6 @@ module PivotalAPI
           if prev_transition
             start_time = Time.parse(prev_transition.occurred_at.to_s)
             end_time = Time.parse(transition.occurred_at.to_s)
-            puts "rejected: start_time: #{start_time} - end_time: #{end_time}"
             duration_hrs += hours_between(start_time, end_time)
           end
           prev_transition = transition
@@ -139,17 +136,21 @@ module PivotalAPI
           if prev_transition
             start_time = Time.parse(prev_transition.occurred_at.to_s)
             end_time = Time.parse(transition.occurred_at.to_s)
-            puts "accepted: start_time: #{start_time} - end_time: #{end_time}"
             duration_hrs += hours_between(start_time, end_time)
           end
           prev_transition = transition
         end
       end
       
+      if current_state != 'accepted' && prev_transition && prev_transition.state == 'started'
+        return hours_between(Time.parse(prev_transition.occurred_at.to_s), Time.now)
+      end
+      
       duration_hrs
     end
 
     def overdue?
+      return false if estimate < 0
       hours >= estimate
     end
 
