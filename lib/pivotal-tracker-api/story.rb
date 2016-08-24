@@ -106,20 +106,44 @@ module PivotalAPI
     def hours
       return 0 if transitions.nil?
       duration_hrs = 0
-      started = nil
-      transitions.each do |transition|
+      prev_transition = nil
+      transitions.reverse.each do |transition|
         case transition.state
         when 'started'
-          started = Time.parse(transition.occurred_at.to_s)
+          prev_transition = transition
         when 'finished'
-          duration_hrs += hours_between(started, Time.parse(transition.occurred_at.to_s)) if started
+          if prev_transition
+            start_time = Time.parse(prev_transition.occurred_at.to_s)
+            end_time = Time.parse(transition.occurred_at.to_s)
+            puts "finished: start_time: #{start_time} - end_time: #{end_time}"
+            duration_hrs += hours_between(start_time, end_time)
+          end
+          prev_transition = transition
+        when 'delivered'
+          if prev_transition
+            start_time = Time.parse(prev_transition.occurred_at.to_s)
+            end_time = Time.parse(transition.occurred_at.to_s)
+            puts "delivered: start_time: #{start_time} - end_time: #{end_time}"
+            duration_hrs += hours_between(start_time, end_time)
+          end
+          prev_transition = transition
+        when 'rejected'
+          if prev_transition
+            start_time = Time.parse(prev_transition.occurred_at.to_s)
+            end_time = Time.parse(transition.occurred_at.to_s)
+            puts "rejected: start_time: #{start_time} - end_time: #{end_time}"
+            duration_hrs += hours_between(start_time, end_time)
+          end
+          prev_transition = transition
+        when 'accepted'
+          if prev_transition
+            start_time = Time.parse(prev_transition.occurred_at.to_s)
+            end_time = Time.parse(transition.occurred_at.to_s)
+            puts "accepted: start_time: #{start_time} - end_time: #{end_time}"
+            duration_hrs += hours_between(start_time, end_time)
+          end
+          prev_transition = transition
         end
-      end
-      
-      if current_state == 'accepted'
-        duration_hrs += hours_between(started, Time.parse(accepted_at.to_s))
-      elsif current_state != 'accepted' && started
-        duration_hrs += hours_between(started, Time.now)
       end
       
       duration_hrs

@@ -136,15 +136,14 @@ class TestActivity < Test::Unit::TestCase
             kind: "label"
           }],
         transitions: [{
-            state: "started",
+            state: "accepted",
             story_id: 1,
             project_id: 2,
             project_version: 3,
-            occurred_at: "2016-08-17T11:03:53-04:00",
+            occurred_at: "2016-08-19T11:04:53-04:00",
             performed_by_id: 4,
             kind: "some-kind"
-          },
-          {
+          },{
             state: "finished",
             story_id: 1,
             project_id: 2,
@@ -152,13 +151,12 @@ class TestActivity < Test::Unit::TestCase
             occurred_at: "2016-08-19T11:03:53-04:00",
             performed_by_id: 4,
             kind: "some-kind"
-          },
-          {
-            state: "accepted",
+          },{
+            state: "started",
             story_id: 1,
             project_id: 2,
             project_version: 3,
-            occurred_at: "2016-08-19T11:03:53-04:00",
+            occurred_at: "2016-08-17T11:03:53-04:00",
             performed_by_id: 4,
             kind: "some-kind"
           }]
@@ -276,7 +274,7 @@ class TestActivity < Test::Unit::TestCase
     end
     
     should "have valid transitions" do
-      assert_equal("started", @story.transitions[0].state)
+      assert_equal("accepted", @story.transitions[0].state)
     end
     
     should "have a valid task_ids" do

@@ -19,7 +19,10 @@ class TestService < Test::Unit::TestCase
     #   iteration = project.iterations.first
     #   iteration.stories.each do |story|
     #     puts "------------------"
-    #     puts "Story: #{story.name} - status: #{story.current_state} - overdue: #{story.overdue?}"
+    #     puts "Story: #{story.name}\n
+    #           status: #{story.current_state}\n
+    #           overdue: #{story.overdue?}\n
+    #           hours: #{story.hours}"
     #     puts "------------------"
     #   end
     #
