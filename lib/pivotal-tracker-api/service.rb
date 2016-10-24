@@ -193,7 +193,7 @@ module PivotalAPI
         raise ArgumentError.new("missing required parameter project_id") unless project_id
         raise ArgumentError.new("missing required parameter sotry_id") unless story_id
         
-        api_url = "/projects/#{project.id}/stories/#{story_id}"
+        api_url = "/projects/#{project_id}/stories/#{story_id}"
         PivotalAPI::Client.put(api_url, updates)
       end
 
