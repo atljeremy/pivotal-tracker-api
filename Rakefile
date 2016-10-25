@@ -32,13 +32,11 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-#require 'rcov/rcovtask'
-#Rcov::RcovTask.new do |test|
-#  test.libs << 'test'
-#  test.pattern = 'test/**/test_*.rb'
-#  test.verbose = true
-#  test.rcov_opts << '--exclude "gems/*"'
-#end
+# require 'simplecov'
+# SimpleCov.command_name 'Unit Tests'
+# SimpleCov.start do
+#   add_filter "/test/"
+# end
 
 task :default => :test
 

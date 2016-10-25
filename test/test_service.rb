@@ -4,9 +4,9 @@ class TestService < Test::Unit::TestCase
 
   context "PivotalAPI::Service" do
   
-    # setup do
-    #   PivotalAPI::Service.set_token "TOKEN_HERE"
-    # end
+    setup do
+      PivotalAPI::Service.set_token "5c17c42f0f4c30cbc0c53ddd8f832e7b"
+    end
     
     # should "get user info" do
     #   me = PivotalAPI::Me.retrieve('USERNAME', 'PASSWORD')
@@ -64,6 +64,13 @@ class TestService < Test::Unit::TestCase
     #
     #   assert_not_nil(activity)
     # end
+    
+    should "should get project activity" do
+      project = PivotalAPI::Project.retrieve(1158374)
+      story = project.story(128105441)
+
+      assert_not_nil(story)
+    end
 
   end
   

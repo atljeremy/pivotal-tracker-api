@@ -44,12 +44,15 @@ module PivotalAPI
       Service.activity(opts)
     end
     
-    def story(opts={})
+    def story(story_id, opts={})
       opts[:project_id] = id
+      opts[:story_id] = story_id
       opts[:parameters] = {} unless opts[:parameters]
       opts[:parameters][:fields] = Story.fields
       
-      Service.story(opts)
+      story = Service.story(opts)
+      story.project_id = id if story && story.project_id.nil?
+      story
     end
     
     def stories(opts={})

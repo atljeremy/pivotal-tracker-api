@@ -176,6 +176,7 @@ module PivotalAPI
         raise ArgumentError.new("missing required key/value :story_id") unless opts[:story_id]
         
         project_id = opts[:project_id]
+        story_id = opts[:story_id]
         opts[:parameters] = {} unless opts[:parameters]
         opts[:parameters][:fields] = opts[:fields] if opts[:fields] && opts[:parameters][:fields].nil?
         
