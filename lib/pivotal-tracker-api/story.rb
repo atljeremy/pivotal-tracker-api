@@ -155,8 +155,6 @@ module PivotalAPI
     end
     
     def update(attrs={})
-      puts "story.id: #{id}"
-      puts "story.project_id: #{project_id}"
       PivotalAPI::Service.update_story(id, project_id, attrs) if attrs.count > 0
     end
 
