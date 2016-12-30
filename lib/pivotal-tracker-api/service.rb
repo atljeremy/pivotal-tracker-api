@@ -212,6 +212,21 @@ module PivotalAPI
         load_story_from_response(response)
       end
 
+      def create_comment(story_id, project_id, text)
+        raise ArgumentError.new("missing required parameter project_id") unless project_id
+        raise ArgumentError.new("missing required parameter sotry_id") unless story_id
+        raise ArgumentError.new("missing required parameter text") unless text
+
+        if text.size > 20000
+          raise ArgumentError.new("Text must be less than 20000") 
+        end
+
+        api_url = "/projects/#{project_id}/stories/#{story_id}/comments"
+        response = PivotalAPI::Client.post(api_url, text: text)
+        json_story = JSON.parse(response, {:symbolize_names => true})
+        PivotalAPI::Comment.from_json(json_story)
+      end
+
       private
         def load_story_from_response(response)
           json_story = JSON.parse(response, {:symbolize_names => true})

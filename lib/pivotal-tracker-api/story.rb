@@ -158,6 +158,10 @@ module PivotalAPI
       PivotalAPI::Service.update_story(id, project_id, attrs) if attrs.count > 0
     end
 
+    def create_comment(text)
+      PivotalAPI::Service.create_comment(id, project_id, text) if text.present?
+    end
+
     protected
     
     def hours_between(start_time, end_time)
