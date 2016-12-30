@@ -11,6 +11,9 @@ A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracker
 ```ruby
 # Use your personal pivotal token
 PivotalAPI::Service.set_token A_PIVOTAL_TOKEN
+
+#then get me object
+@me = PivotalAPI::Service.get_me
 ```
 
 ```ruby

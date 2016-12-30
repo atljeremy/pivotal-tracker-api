@@ -9,6 +9,13 @@ module PivotalAPI
         PivotalAPI::Client.token = token
       end
 
+      def get_me
+        response = PivotalAPI::Client.get("/me")
+        json_me = JSON.parse(response, {:symbolize_names => true})
+        PivotalAPI::Me.from_json(json_me)
+      end
+
+
       def me(username, password)
         PivotalAPI::Client.username = username
         PivotalAPI::Client.password = password
