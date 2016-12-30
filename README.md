@@ -40,6 +40,10 @@ PivotalAPI::Service.set_token A_PIVOTAL_TOKEN
 ```ruby
 # Get a specific story for a project, this will return a PivotalAPI::Story instance
 @story = @project.story(STORY_ID)
+
+
+# Create a story for a project
+@story = @project.create_story(name: 'Ticket' , description: 'Write explanation here')
 ```
 
 ```ruby

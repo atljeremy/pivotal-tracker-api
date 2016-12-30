@@ -17,11 +17,11 @@ module PivotalAPI
       def from_json(json)
         parse_json_project(json)
       end
-      
+
       def retrieve(project_id)
         Service.project(project_id: project_id, fields: Project.fields)
       end
-      
+
       protected
 
       def parse_json_project(project)
@@ -35,77 +35,81 @@ module PivotalAPI
           current_velocity: project[:current_velocity]
         })
       end
-      
+
     end
-    
+
     def activity(opts={})
       opts[:project_id] = id
-      
+
       Service.activity(opts)
     end
-    
+
     def story(story_id, opts={})
       opts[:project_id] = id
       opts[:story_id] = story_id
       opts[:parameters] = {} unless opts[:parameters]
       opts[:parameters][:fields] = Story.fields
-      
+
       story = Service.story(opts)
       story.project_id = id if story && story.project_id.nil?
       story
     end
-    
+
     def stories(opts={})
       opts[:project_id] = id
       opts[:parameters] = {} unless opts[:parameters]
       opts[:parameters][:fields] = Story.fields
-      
+
       Service.stories(opts)
     end
-    
+
+    def create_story(attrs={})
+      Service.create_story(id, attrs) if attrs.count > 0
+    end
+
     def iterations(opts={})
       opts[:project_id] = id
       opts[:parameters] = {} unless opts[:parameters]
       opts[:fields] = Iteration.fields if opts[:fields].nil?
-      
+
       Service.iterations(opts)
     end
-    
+
     def current_iteration
       iterations.first
     end
-    
+
     def previous_iteration
       iterations(scope: 'done').first
     end
-    
+
     def next_iteration
       iterations(scope: 'backlog').first
     end
 
   end
-  
+
   class Projects < Project
-    
+
     class << self
-      
+
       def retrieve()
         Service.projects(fields: Project.fields)
       end
-    
+
       def from_json(json)
         parse_json_projects(json)
       end
-    
+
       protected
-    
+
       def parse_json_projects(json_projects)
         projects = Array.new
         json_projects.each { |project| projects << parse_json_project(project) }
         projects
       end
-    
+
     end
-    
+
   end
 end
