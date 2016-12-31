@@ -1,4 +1,5 @@
 require 'cgi'
+require 'addressable/uri'
 
 module PivotalAPI
   module Extensions
@@ -23,8 +24,11 @@ module PivotalAPI
           else
             resulting_url += "#{params}"
           end
+
+	  # convert to ascii 
+	  url = Addressable::URI.parse(resulting_url).normalize.to_str
           
-          if replace then replace(resulting_url) else resulting_url end
+          if replace then replace(url) else url end
         end
         
         protected
