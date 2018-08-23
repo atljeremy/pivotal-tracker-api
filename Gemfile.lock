@@ -101,6 +101,7 @@ DEPENDENCIES
   business_time (~> 0.7.6)
   jeweler (~> 2.1)
   mocha
+  rake
   rdoc (~> 3.12)
   rest-client (~> 2.0)
   shoulda
@@ -108,4 +109,4 @@ DEPENDENCIES
   test-unit
 
 BUNDLED WITH
-   1.13.6
+   1.16.3
