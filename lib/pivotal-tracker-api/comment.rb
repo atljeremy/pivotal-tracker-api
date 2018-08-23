@@ -55,7 +55,7 @@ module PivotalAPI
     
     def self.parse_json_comment(comment)
       person = Person.from_json(comment[:person]) if comment[:person]
-      person = Person.unkown if person.nil?
+      person = Person.unknown if person.nil?
       new({
         id: comment[:id].to_i,
         text: comment[:text],

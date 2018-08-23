@@ -11,6 +11,9 @@ A Pivotal Tracker API gem that can be used to interface with the Pivotal Tracker
 ```ruby
 # Use your personal pivotal token
 PivotalAPI::Service.set_token A_PIVOTAL_TOKEN
+
+#then get me object
+@me = PivotalAPI::Service.get_me
 ```
 
 ```ruby
@@ -40,6 +43,10 @@ PivotalAPI::Service.set_token A_PIVOTAL_TOKEN
 ```ruby
 # Get a specific story for a project, this will return a PivotalAPI::Story instance
 @story = @project.story(STORY_ID)
+
+
+# Create a story for a project
+@story = @project.create_story(name: 'Ticket' , description: 'Write explanation here')
 ```
 
 ```ruby
