@@ -10,10 +10,11 @@ gem 'business_time', '~> 0.9.3'
 group :development do
   gem 'rdoc', '~> 3.12'
   gem 'bundler', '~> 1.0'
-  gem 'jeweler', '~> 2.1'
+  gem 'jeweler', '~> 2.3'
 end
 
 group :test do
+  gem 'rake'
   gem 'shoulda'
   gem "mocha"
   gem 'test-unit'
