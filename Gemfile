@@ -14,6 +14,7 @@ group :development do
 end
 
 group :test do
+  gem 'rake'
   gem 'shoulda'
   gem "mocha"
   gem 'test-unit'

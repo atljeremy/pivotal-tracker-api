@@ -3,11 +3,11 @@ require 'helper'
 class TestService < Test::Unit::TestCase
 
   context "PivotalAPI::Service" do
-  
+
     setup do
       PivotalAPI::Service.set_token "5c17c42f0f4c30cbc0c53ddd8f832e7b"
     end
-    
+
     # should "get user info" do
     #   me = PivotalAPI::Me.retrieve('USERNAME', 'PASSWORD')
     #   assert_not_nil(me)
@@ -29,7 +29,7 @@ class TestService < Test::Unit::TestCase
     #   assert_not_nil(iteration)
     #   assert_not_nil(iteration.stories)
     # end
-  
+
     # should "should get project and stories" do
     #   project = PivotalAPI::Project.retrieve(1158374)
     #   stories = project.stories()
@@ -41,7 +41,7 @@ class TestService < Test::Unit::TestCase
     #
     #   assert_not_nil(stories)
     # end
-  
+
     # should "should get projects" do
     #   project = PivotalAPI::Projects.retrieve()
     #   project.each do |project|
@@ -52,7 +52,7 @@ class TestService < Test::Unit::TestCase
     #
     #   assert_not_nil(project)
     # end
-  
+
     # should "should get project activity" do
     #   project = PivotalAPI::Project.retrieve(1158374)
     #   activity = project.activity
@@ -64,14 +64,14 @@ class TestService < Test::Unit::TestCase
     #
     #   assert_not_nil(activity)
     # end
-    
-    should "should get project activity" do
-      project = PivotalAPI::Project.retrieve(1158374)
-      story = project.story(128105441)
 
-      assert_not_nil(story)
-    end
+    # should "should get project activity" do
+    #   project = PivotalAPI::Project.retrieve(1158374)
+    #   story = project.story(128105441)
+    #
+    #   assert_not_nil(story)
+    # end
 
   end
-  
+
 end
