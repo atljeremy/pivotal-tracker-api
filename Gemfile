@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 # Example:
 #   gem 'activesupport', '>= 2.3.5'
 gem 'rest-client', '~> 2.0'
-gem 'business_time', '~> 0.7.6'
+gem 'business_time', '~> 0.9.3'
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
